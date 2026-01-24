@@ -2,7 +2,7 @@ package repository;
 
 import exception.*;
 import model.Game;
-import src.DatabaseConnection;
+import utils.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

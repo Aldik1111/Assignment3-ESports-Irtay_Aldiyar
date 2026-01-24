@@ -1,7 +1,7 @@
 package repository;
 
 import model.Match;
-import src.DatabaseConnection;
+import utils.DatabaseConnection;
 import exception.*;
 
 import java.sql.*;

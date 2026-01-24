@@ -1,12 +1,10 @@
 package repository;
 
 import model.Tournament;
-import src.DatabaseConnection;
+import utils.DatabaseConnection;
 import exception.*;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TournamentRepository {
 
