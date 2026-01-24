@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamRepository {
-    public void createTeam(Team team){
+    public void create(Team team){
         String sql = "insert into teams(id,name) values(?, ?)";
 
         try(Connection conn = DatabaseConnection.getConnection();
@@ -54,17 +54,19 @@ public class TeamRepository {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
 
-            return new Team(
+            if (rs.next()) {
+                return new Team(
                         rs.getInt("id"),
                         rs.getString("name")
                 );
-
+            }
+            return null;
         } catch (SQLException e) {
             throw new DatabaseException("Failed to fetch team:\n" + e, e);
         }
     }
 
-    public void updateTeam(int id, Team team) {
+    public void update(int id, Team team) {
         String sql = "update teams set name = ? where id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -76,7 +78,7 @@ public class TeamRepository {
         }
     }
 
-    public void deleteTeam(int id) {
+    public void delete(int id) {
         String sql = "delete from teams where id = ?";
 
         try(Connection conn = DatabaseConnection.getConnection();

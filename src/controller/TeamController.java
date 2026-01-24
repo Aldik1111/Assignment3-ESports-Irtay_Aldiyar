@@ -12,7 +12,7 @@ public class TeamController {
 
     public void createTeam(Team team) {
         try {
-            service.createTeam(team);
+            service.create(team);
             System.out.println("<=======================>");
             System.out.println("Team " + team.getName() +" created");
         } catch (ApplicationException e) {
@@ -39,7 +39,7 @@ public class TeamController {
 
     public void deleteTeam(int id){
         try {
-            service.deleteTeam(id);
+            service.delete(id);
             System.out.println("<=======================>");
             System.out.println("Team id " + id +" deleted");
         } catch (ApplicationException e) {

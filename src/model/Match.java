@@ -11,11 +11,13 @@ public class Match implements IScorable {
     private Team winner;
     private Tournament tournament;
 
-    public Match(int id, Team team1, Team team2, Tournament tournament) {
+    public Match(int id, Team team1, Team team2, Tournament tournament, int score1, int score2) {
         this.id = id;
         this.team1 = team1;
         this.team2 = team2;
         this.tournament = tournament;
+        this.score1 = score1;
+        this.score2 = score2;
     }
 
     public int getId() {return id;}

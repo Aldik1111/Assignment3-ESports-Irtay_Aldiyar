@@ -8,11 +8,11 @@ import java.util.List;
 public class TeamService {
     private final TeamRepository repository = new TeamRepository();
 
-    public void createTeam(Team team){
+    public void create(Team team){
         if(team.getName().isEmpty()) {
             throw new ValidationException("Team name cannot be empty!");
         }
-        repository.createTeam(team);
+        repository.create(team);
     }
 
     public List<Team> getAll(){
@@ -24,11 +24,11 @@ public class TeamService {
         return repository.getById(id);
     }
 
-    public void updateTeam(int id, Team team) {
-        repository.updateTeam(id, team);
+    public void update(int id, Team team) {
+        repository.update(id, team);
     }
 
-    public void deleteTeam(int id) {
-        repository.deleteTeam(id);
+    public void delete(int id) {
+        repository.delete(id);
     }
 }

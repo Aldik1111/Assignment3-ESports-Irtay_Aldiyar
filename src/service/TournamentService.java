@@ -15,4 +15,20 @@ public class TournamentService {
         }
         repository.create(tournament);
     }
+
+    public List<Tournament> getAll() {
+        return repository.getAll();
+    }
+
+    public Tournament getbyId(int id) {
+        return repository.getById(id);
+    }
+
+    public void update(int id, Tournament tournament) {
+        repository.update(id, tournament);
+    }
+
+    public void delete(int id) {
+        repository.delete(id);
+    }
 }
