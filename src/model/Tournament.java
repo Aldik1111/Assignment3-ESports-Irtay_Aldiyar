@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
+    private int id;
     private String name;
     private Game game;
     private List<Team> teams;
 
-    public Tournament(String name, Game game) {
+    public Tournament(int id, String name, Game game) {
+        this.id = id;
         this.name = name;
         this.game = game;
         this.teams = new ArrayList<>();
     }
+
+    public int getId(){ return id; }
 
     public String getName() {
         return name;

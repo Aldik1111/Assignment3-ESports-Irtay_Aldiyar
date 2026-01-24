@@ -3,16 +3,24 @@ package model;
 import model.interfaces.IScorable;
 
 public class Match implements IScorable {
+    private int id;
     private Team team1;
     private Team team2;
     private int score1;
     private int score2;
     private Team winner;
+    private Tournament tournament;
 
-    public Match(Team team1, Team team2) {
+    public Match(int id, Team team1, Team team2, Tournament tournament) {
+        this.id = id;
         this.team1 = team1;
         this.team2 = team2;
+        this.tournament = tournament;
     }
+
+    public int getId() {return id;}
+
+    public int getTournamentId() {return tournament.getId();}
 
     public void playMatch() {
         setScore((int)(Math.random()*10), (int)(Math.random()*10));
@@ -22,6 +30,9 @@ public class Match implements IScorable {
         this.score1 = score1;
         this.score2 = score2;
     }
+
+    public int getTeam1Id() {return team1.getId();}
+    public int getTeam2Id() {return team2.getId();}
 
     public Team getWinner() { // Get winner
         if(score1>score2){winner=team1;}

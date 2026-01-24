@@ -12,12 +12,12 @@ public class Team implements IRegisterable {
     private Game game;
     private boolean registered = false;
 
-    public Team(int id, String name, Game game) {
+    public Team(int id, String name) {
         this.id = id;
         this.name = name;
         this.players = new ArrayList<>();
-        this.game = game;
     }
+
 
     public int getId() { return id; }
 
