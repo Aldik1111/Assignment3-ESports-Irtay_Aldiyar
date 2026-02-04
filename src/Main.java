@@ -63,21 +63,21 @@ public class Main {
         System.out.println("\n--- All Matches ---");
         matchController.getAll();
 
-        // --- Обновление команды ---
+        // commands
         teamA.setName("Team Alpha Updated");
         teamController.update(teamA);
 
         System.out.println("\n--- Teams after update ---");
         teamController.getAll();
 
-        // --- Удаление игрока ---
+        // Delete player
         System.out.println("\nDeleting Player3...");
         playerController.delete(3);
 
         System.out.println("\n--- All Players ---");
         playerController.getAll();
 
-        // --- Удаление турнира ---
+        // delete tournament
         System.out.println("\nDeleting Tournament Winter Cup...");
         tournamentController.delete(1);
 
