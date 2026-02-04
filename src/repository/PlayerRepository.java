@@ -1,87 +1,55 @@
 package repository;
 
 import model.Player;
-import utils.DatabaseConnection;
-import exception.DatabaseException;
+import model.Team;
+import repository.impl.JdbcCrudRepository;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class PlayerRepository {
+public class PlayerRepository extends JdbcCrudRepository<Player> {
 
-    public void create(Player player) {
-        String sql = """
-            INSERT INTO players (id, nickname, age, rank, team_id)
-            VALUES (?, ?, ?, ?, ?)
-        """;
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, player.getId());
-            ps.setString(2, player.getNickname());
-            ps.setInt(3, player.getAge());
-            ps.setInt(4, player.getRank());
-            ps.setInt(5, player.getTeamId());
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to create player", e);
-        }
+    @Override
+    protected String getTableName() {
+        return "players";
     }
 
-    public List<Player> getAll() {
-        String sql = "SELECT * FROM players";
-        List<Player> players = new ArrayList<>();
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                players.add(
-                        new Player(
-                                rs.getInt("id"),
-                                rs.getString("nickname"),
-                                rs.getInt("age"),
-                                rs.getInt("rank"),
-                                rs.getInt("team_id")
-                        )
-                );
-            }
-
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to fetch players", e);
-        }
-        return players;
+    @Override
+    protected Player mapRowToEntity(ResultSet rs) throws SQLException {
+        return new Player(
+                rs.getInt("id"),
+                rs.getString("nickname"),
+                rs.getInt("age"),
+                rs.getInt("rank"),
+                rs.getInt("team_id")
+        );
     }
 
-    public List<Player> getByTeamId(int teamId) {
-        String sql = "SELECT * FROM players WHERE team_id = ?";
-        List<Player> players = new ArrayList<>();
+    @Override
+    protected void setInsertParams(PreparedStatement ps, Player entity) throws SQLException {
+        ps.setInt(1, entity.getId());
+        ps.setString(2, entity.getNickname());
+        ps.setInt(3, entity.getAge());
+        ps.setInt(4, entity.getRank());
+        ps.setInt(5, entity.getTeamId());
+    }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    @Override
+    protected void setUpdateParams(PreparedStatement ps, Player entity) throws SQLException {
+        ps.setString(1, entity.getNickname());
+        ps.setInt(2, entity.getAge());
+        ps.setInt(3, entity.getRank());
+        ps.setInt(4, entity.getTeamId());
+        ps.setInt(5, entity.getId());
+    }
 
-            ps.setInt(1, teamId);
-            ResultSet rs = ps.executeQuery();
+    @Override
+    public void update(int id, Player player) {
+        update(player.getId(), player);
+    }
 
-            while (rs.next()) {
-                players.add(
-                        new Player(
-                                rs.getInt("id"),
-                                rs.getString("nickname"),
-                                rs.getInt("age"),
-                                rs.getInt("rank"),
-                                rs.getInt("team_id")
-                        )
-                );
-            }
-
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to fetch players by team", e);
-        }
-        return players;
+    protected String getInsertSql() {
+        return "INSERT INTO players (id, nickname, age, rank, team_id) VALUES (?, ?, ?, ?, ?)";
     }
 }

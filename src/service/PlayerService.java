@@ -2,26 +2,31 @@ package service;
 
 import model.Player;
 import repository.PlayerRepository;
-import exception.ValidationException;
 
 import java.util.List;
+import java.util.Optional;
 
 public class PlayerService {
 
-    private final PlayerRepository repository = new PlayerRepository();
+    private final PlayerRepository playerRepository = new PlayerRepository();
 
-    public void create(Player player) {
-        if (player.getNickname().isEmpty()) {
-            throw new ValidationException("Nickname cannot be empty");
-        }
-        repository.create(player);
+    public void createPlayer(Player player) {
+        playerRepository.save(player);
     }
 
-    public List<Player> getAll() {
-        return repository.getAll();
+    public Optional<Player> getPlayerById(int id) {
+        return playerRepository.findById(id);
     }
 
-    public List<Player> getByTeam(int teamId) {
-        return repository.getByTeamId(teamId);
+    public List<Player> getAllPlayers() {
+        return playerRepository.findAll();
+    }
+
+    public void updatePlayer(Player player) {
+        playerRepository.save(player);
+    }
+
+    public void deletePlayer(int id) {
+        playerRepository.deleteById(id);
     }
 }

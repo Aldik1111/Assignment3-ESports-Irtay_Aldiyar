@@ -1,0 +1,83 @@
+package repository.impl;
+
+import model.BaseEntity;
+import repository.interfaces.CrudRepository;
+import utils.DatabaseConnection;
+import exception.DatabaseException;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRepository<T> {
+
+    protected abstract String getTableName();
+    protected abstract T mapRowToEntity(ResultSet rs) throws SQLException;
+    protected abstract void setInsertParams(PreparedStatement ps, T entity) throws SQLException;
+    protected abstract void setUpdateParams(PreparedStatement ps, T entity) throws SQLException;
+
+    @Override
+    public void save(T entity) {
+        String sql = "INSERT INTO " + getTableName() + " VALUES (...)"; // вставим в наследниках
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            setInsertParams(ps, entity);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to save entity", e);
+        }
+    }
+
+    @Override
+    public Optional<T> findById(int id) {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapRowToEntity(rs));
+            }
+            return Optional.empty();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to fetch entity", e);
+        }
+    }
+
+    @Override
+    public List<T> findAll() {
+        String sql = "SELECT * FROM " + getTableName();
+        List<T> list = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRowToEntity(rs));
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to fetch entities", e);
+        }
+        return list;
+    }
+
+    @Override
+    public void deleteById(int id) {
+        String sql = "DELETE FROM " + getTableName() + " WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to delete entity", e);
+        }
+    }
+}

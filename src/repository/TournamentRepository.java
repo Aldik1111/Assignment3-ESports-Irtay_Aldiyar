@@ -2,116 +2,48 @@ package repository;
 
 import model.Game;
 import model.Tournament;
-import repository.impl.InMemoryCrudRepository;
-import utils.DatabaseConnection;
-import exception.*;
+import repository.impl.JdbcCrudRepository;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class TournamentRepository extends InMemoryCrudRepository<Tournament> {
+public class TournamentRepository extends JdbcCrudRepository<Tournament> {
 
-    public void create(Tournament tournament){
-        String sql = "insert into tournaments (id, name, game_id) values (?, ?, ?)";
+    private final GameRepository gameRepo = new GameRepository();
 
-        try(Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, tournament.getId());
-            ps.setString(2, tournament.getName());
-            ps.setInt(3, tournament.getGame().getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to create tournament:\n " + e, e);
-        }
-    }
-
-
-    public List<Tournament> getAll() {
-        String sql = "select * from tournaments";
-        List<Tournament> tournaments = new ArrayList<>();
-
-        GameRepository gameRepo = new GameRepository();
-
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Game game = gameRepo.getById(rs.getInt("game_id"));
-                 Tournament tournament = new Tournament(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        game
-                );
-                tournaments.add(tournament);
-            }
-
-        } catch (SQLException e) {
-            throw new DatabaseException(" Failed to fetch teams:\n " + e, e);
-        }
-        return tournaments;
-    }
-
-    public Tournament getById(int id) {
-        String sql = "SELECT * FROM tournaments WHERE id = ?";
-
-        GameRepository gameRepo = new GameRepository();
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                Game game = gameRepo.getById(rs.getInt("game_id"));
-                return new Tournament(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        game
-                );
-            }
-
-            return null;
-
-
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to fetch tournament:\n" + e, e);
-        }
-    }
-
-    public void update(int id, Tournament tournament) {
-        String sql = "update tournaments set name = ?, game_id = ? where id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, tournament.getName());
-            ps.setInt(2, tournament.getGame().getId());
-            ps.setInt(3, tournament.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to update tournament:\n " + e, e);
-        }
-    }
-
-    public void delete(int id) {
-        String sql = "delete from tournaments where id = ?";
-
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e){
-            throw new DatabaseException("Failed to tournament tournament:\n " + e, e);
-        }
+    @Override
+    protected String getTableName() {
+        return "tournaments";
     }
 
     @Override
-    public void update(Tournament tournament) {
-        findById(tournament.getId()).ifPresent(existing ->
-                existing.setName(tournament.getName())
-        );
+    protected Tournament mapRowToEntity(ResultSet rs) throws SQLException {
+        Game game = gameRepo.findById(rs.getInt("game_id")).orElse(null);
+        return new Tournament(rs.getInt("id"), rs.getString("name"), game);
     }
 
+    @Override
+    protected void setInsertParams(PreparedStatement ps, Tournament entity) throws SQLException {
+        ps.setInt(1, entity.getId());
+        ps.setString(2, entity.getName());
+        ps.setInt(3, entity.getGame().getId());
+    }
+
+    @Override
+    protected void setUpdateParams(PreparedStatement ps, Tournament entity) throws SQLException {
+        ps.setString(1, entity.getName());
+        ps.setInt(2, entity.getGame().getId());
+        ps.setInt(3, entity.getId());
+    }
+
+
+    protected String getInsertSql() {
+        return "INSERT INTO tournaments (id, name, game_id) VALUES (?, ?, ?)";
+    }
+
+    @Override
+    public void update(int id, Tournament tournament) {
+        update(tournament.getId(), tournament);
+    }
 }

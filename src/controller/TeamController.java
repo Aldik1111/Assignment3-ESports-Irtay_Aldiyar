@@ -1,54 +1,42 @@
 package controller;
 
-import model.Game;
 import model.Team;
 import service.TeamService;
 
 import java.util.List;
-import exception.*;
-
 
 public class TeamController {
-    private final TeamService service = new TeamService();
+
+    private final TeamService teamService = new TeamService();
 
     public void create(Team team) {
-        try {
-            service.create(team);
-            System.out.println("<=======================>");
-            System.out.println("Team " + team.getName() +" created");
-        } catch (ApplicationException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
+        teamService.createTeam(team);
+        System.out.println("Team created: " + team.getName());
     }
 
     public void getAll() {
-        List<Team> games = service.getAll();
-        if (games.isEmpty()) {
-            System.out.println("No games found.");
+        List<Team> teams = teamService.getAllTeams();
+        if (teams.isEmpty()) {
+            System.out.println("No teams found.");
             return;
         }
-        games.forEach(g ->
-                System.out.println(g.getId() + " | " + g.getName())
+        teams.forEach(t -> System.out.println(t.getId() + " | " + t.getName()));
+    }
+
+    public void getById(int id) {
+        teamService.getTeamById(id).ifPresentOrElse(
+                t -> System.out.println(t.getId() + " | " + t.getName()),
+                () -> System.out.println("Team not found.")
         );
     }
 
-
-    public void getById(int id) {
-        try {
-            service.getById(id);
-        } catch (ApplicationException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
+    public void update(Team team) {
+        teamService.updateTeam(team);
+        System.out.println("Team updated.");
     }
 
-    public void deleteTeam(int id){
-        try {
-            service.delete(id);
-            System.out.println("<=======================>");
-            System.out.println("Team id " + id +" deleted");
-        } catch (ApplicationException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
+    public void delete(int id) {
+        teamService.deleteTeam(id);
+        System.out.println("Team deleted.");
     }
-
 }

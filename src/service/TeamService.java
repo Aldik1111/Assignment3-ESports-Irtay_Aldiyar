@@ -2,33 +2,31 @@ package service;
 
 import model.Team;
 import repository.TeamRepository;
-import exception.*;
+
 import java.util.List;
+import java.util.Optional;
 
 public class TeamService {
-    private final TeamRepository repository = new TeamRepository();
 
-    public void create(Team team){
-        if(team.getName().isEmpty()) {
-            throw new ValidationException("Team name cannot be empty!");
-        }
-        repository.create(team);
+    private final TeamRepository teamRepository = new TeamRepository();
+
+    public void createTeam(Team team) {
+        teamRepository.save(team);
     }
 
-    public List<Team> getAll(){
-        return repository.getAll();
+    public Optional<Team> getTeamById(int id) {
+        return teamRepository.findById(id);
     }
 
-    public Team getById(int id) {
-        Team team = repository.getById(id);
-        return repository.getById(id);
+    public List<Team> getAllTeams() {
+        return teamRepository.findAll();
     }
 
-    public void update(int id, Team team) {
-        repository.update(id, team);
+    public void updateTeam(Team team) {
+        teamRepository.save(team);
     }
 
-    public void delete(int id) {
-        repository.delete(id);
+    public void deleteTeam(int id) {
+        teamRepository.deleteById(id);
     }
 }

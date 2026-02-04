@@ -4,31 +4,29 @@ import model.Game;
 import repository.GameRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class GameService {
 
-    private final GameRepository repository = new GameRepository();
+    private final GameRepository gameRepository = new GameRepository();
 
-    public void create(Game game) {
-        if (!game.getGenre().equalsIgnoreCase("MOBA") &&
-                !game.getGenre().equalsIgnoreCase("FPS")) {
-            throw new IllegalArgumentException("Game genre must be MOBA or FPS");
-        }
-        repository.create(game);
-    }
-    public List<Game> getAll() {
-        return repository.getAll();
+    public void createGame(Game game) {
+        gameRepository.save(game);
     }
 
-    public Game getById(int id) {
-        return repository.getById(id);
+    public Optional<Game> getGameById(int id) {
+        return gameRepository.findById(id);
     }
 
-    public void updateGame(int id, Game game) {
-        repository.update(id, game);
+    public List<Game> getAllGames() {
+        return gameRepository.findAll();
+    }
+
+    public void updateGame(Game game) {
+        gameRepository.save(game); // для простоты save обновляет, можно добавить check
     }
 
     public void deleteGame(int id) {
-        repository.delete(id);
+        gameRepository.deleteById(id);
     }
 }

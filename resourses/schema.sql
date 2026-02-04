@@ -13,6 +13,7 @@ create table if not exists teams(
 create table if not exists players(
     id int primary key,
     nickname varchar(100) not null,
+    age int,
     rank int,
     team_id int,
     foreign key (team_id) references teams(id)

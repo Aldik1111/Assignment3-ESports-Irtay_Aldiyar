@@ -1,29 +1,32 @@
 package service;
 
-import exception.*;
 import model.Match;
 import repository.MatchRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MatchService {
-    private final MatchRepository repository = new MatchRepository();
 
-    public void create(Match match) {
-        if(match.getTeam1Id() == match.getTeam2Id()) {
-            throw new ValidationException("Teams must be different");
-        }
-        repository.create(match);
-    }
-    public List<Match> getAll() {
-        return repository.getAll();
+    private final MatchRepository matchRepository = new MatchRepository();
+
+    public void createMatch(Match match) {
+        matchRepository.save(match);
     }
 
-    public Match getById(int id) {
-        return repository.getById(id);
+    public Optional<Match> getMatchById(int id) {
+        return matchRepository.findById(id);
     }
 
-    public void delete(int id) {
-        repository.delete(id);
+    public List<Match> getAllMatches() {
+        return matchRepository.findAll();
+    }
+
+    public void updateMatch(Match match) {
+        matchRepository.save(match);
+    }
+
+    public void deleteMatch(int id) {
+        matchRepository.deleteById(id);
     }
 }

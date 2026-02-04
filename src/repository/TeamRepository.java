@@ -1,101 +1,42 @@
 package repository;
 
 import model.Team;
-import repository.impl.InMemoryCrudRepository;
-import utils.DatabaseConnection;
-import exception.*;
+import repository.impl.JdbcCrudRepository;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class TeamRepository extends InMemoryCrudRepository<Team> {
-    public void create(Team team){
-        String sql = "insert into teams(id,name) values(?, ?)";
+public class TeamRepository extends JdbcCrudRepository<Team> {
 
-        try(Connection conn = DatabaseConnection.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, team.getId());
-            ps.setString(2,team.getName());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to create team:\n " + e, e);
-        }
-    }
-
-    public List<Team> getAll() {
-        String sql = "select * from teams";
-        List<Team> teams = new ArrayList<>();
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Team team = new Team(
-                        rs.getInt("id"),
-                        rs.getString("name")
-                );
-                teams.add(team);
-            }
-
-        } catch (SQLException e) {
-            throw new DatabaseException(" Failed to fetch teams:\n " + e, e);
-        }
-    return teams;
-    }
-
-    public Team getById(int id) {
-        String sql = "SELECT * FROM teams WHERE id = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return new Team(
-                        rs.getInt("id"),
-                        rs.getString("name")
-                );
-            }
-            return null;
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to fetch team:\n" + e, e);
-        }
-    }
-
-    public void update(int id, Team team) {
-        String sql = "update teams set name = ? where id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, team.getName());
-            ps.setInt(2, team.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseException("Failed to update team:\n " + e, e);
-        }
-    }
-
-    public void delete(int id) {
-        String sql = "delete from teams where id = ?";
-
-        try(Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e){
-            throw new DatabaseException("Failed to delete team:\n " + e, e);
-        }
-    }
     @Override
-    public void update(Team team) {
-        findById(team.getId()).ifPresent(existing ->
-                existing.setName(team.getName())
-        );
+    protected String getTableName() {
+        return "teams";
     }
 
+    @Override
+    protected Team mapRowToEntity(ResultSet rs) throws SQLException {
+        return new Team(rs.getInt("id"), rs.getString("name"));
+    }
 
+    @Override
+    protected void setInsertParams(PreparedStatement ps, Team entity) throws SQLException {
+        ps.setInt(1, entity.getId());
+        ps.setString(2, entity.getName());
+    }
+
+    @Override
+    protected void setUpdateParams(PreparedStatement ps, Team entity) throws SQLException {
+        ps.setString(1, entity.getName());
+        ps.setInt(2, entity.getId());
+    }
+
+    @Override
+    public void update(int id, Team team) {
+        update(team.getId(), team);
+    }
+
+    protected String getInsertSql() {
+        return "INSERT INTO teams (id, name) VALUES (?, ?)";
+    }
 }

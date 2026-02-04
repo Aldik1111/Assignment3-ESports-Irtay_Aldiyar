@@ -53,8 +53,10 @@ public class Team extends BaseEntity implements IRegisterable, IValidatable<Team
 
     @Override
     public boolean isValid(Team team) {
-        return team != null
-                && team.getName() != null
-                && !team.getName().trim().isEmpty();
+        return team != null &&
+                team.getName() != null &&
+                !team.getName().trim().isEmpty() &&
+                players.size() <= 5;
     }
+
 }

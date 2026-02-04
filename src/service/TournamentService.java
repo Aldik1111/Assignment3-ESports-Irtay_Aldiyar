@@ -1,34 +1,32 @@
 package service;
 
-import exception.*;
 import model.Tournament;
 import repository.TournamentRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TournamentService {
-    private final TournamentRepository repository = new TournamentRepository();
 
-    public void create(Tournament tournament) {
-        if( tournament.getName().isEmpty()) {
-            throw new ValidationException("Tournament name cannot be empty");
-        }
-        repository.create(tournament);
+    private final TournamentRepository tournamentRepository = new TournamentRepository();
+
+    public void createTournament(Tournament tournament) {
+        tournamentRepository.save(tournament);
     }
 
-    public List<Tournament> getAll() {
-        return repository.getAll();
+    public Optional<Tournament> getTournamentById(int id) {
+        return tournamentRepository.findById(id);
     }
 
-    public Tournament getbyId(int id) {
-        return repository.getById(id);
+    public List<Tournament> getAllTournaments() {
+        return tournamentRepository.findAll();
     }
 
-    public void update(int id, Tournament tournament) {
-        repository.update(id, tournament);
+    public void updateTournament(Tournament tournament) {
+        tournamentRepository.save(tournament);
     }
 
-    public void delete(int id) {
-        repository.delete(id);
+    public void deleteTournament(int id) {
+        tournamentRepository.deleteById(id);
     }
 }

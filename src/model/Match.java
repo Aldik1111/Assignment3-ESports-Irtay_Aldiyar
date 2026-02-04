@@ -2,8 +2,7 @@ package model;
 
 import model.interfaces.IScorable;
 
-public class Match implements IScorable {
-    private int id;
+public class Match extends BaseEntity implements IScorable {
     private Team team1;
     private Team team2;
     private int score1;
@@ -12,12 +11,23 @@ public class Match implements IScorable {
     private Tournament tournament;
 
     public Match(int id, Team team1, Team team2, Tournament tournament, int score1, int score2) {
-        this.id = id;
+        super(id, "Match " + id); // можно использовать id или составное имя
         this.team1 = team1;
         this.team2 = team2;
         this.tournament = tournament;
         this.score1 = score1;
         this.score2 = score2;
+    }
+
+    @Override
+    public String getEntityType() {
+        return "Match";
+    }
+
+    @Override
+    public String getInfo() {
+        return team1.getName() + " VS " + team2.getName() +
+                " | Tournament: " + tournament.getName();
     }
 
     public int getId() {return id;}
