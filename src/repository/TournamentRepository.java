@@ -1,6 +1,7 @@
 package repository;
 
 import model.Game;
+import model.Match;
 import model.Tournament;
 import repository.impl.JdbcCrudRepository;
 
@@ -37,13 +38,29 @@ public class TournamentRepository extends JdbcCrudRepository<Tournament> {
         ps.setInt(3, entity.getId());
     }
 
+    @Override
+    public void update(Tournament tournament) {
+        String sql = getUpdateSql();
 
+        try (var conn = utils.DatabaseConnection.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            setUpdateParams(ps, tournament);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new exception.DatabaseException("Failed to update tournament", e);
+        }
+    }
+
+    @Override
     protected String getInsertSql() {
         return "INSERT INTO tournaments (id, name, game_id) VALUES (?, ?, ?)";
     }
 
     @Override
-    public void update(int id, Tournament tournament) {
-        update(tournament.getId(), tournament);
+    protected String getUpdateSql() {
+        return "UPDATE tournaments SET name = ?, game_id = ? WHERE id = ?";
     }
+
 }

@@ -17,19 +17,18 @@ public class GameRepository extends JdbcCrudRepository<Game> {
 
     @Override
     protected Game mapRowToEntity(ResultSet rs) throws SQLException {
-        return new Game(rs.getInt("id"), rs.getString("name")) {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        String genre = rs.getString("genre");
+        return new Game(id, name) {
             @Override
             public int getTeamSize() {
-                return 0; // default, потом можно расширить под MOBA/FPS
+                return 0;
             }
 
             @Override
             public String getGenre() {
-                try {
-                    return rs.getString("genre");
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                return genre;
             }
         };
     }
@@ -49,11 +48,28 @@ public class GameRepository extends JdbcCrudRepository<Game> {
     }
 
     @Override
-    public void update(int id, Game game) {
-        update(game.getId(), game);
+    public void update(Game game) {
+        String sql = getUpdateSql();
+
+        try (var conn = utils.DatabaseConnection.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            setUpdateParams(ps, game);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new exception.DatabaseException("Failed to update game", e);
+        }
     }
 
+    @Override
     protected String getInsertSql() {
         return "INSERT INTO games (id, name, genre) VALUES (?, ?, ?)";
     }
+
+    @Override
+    protected String getUpdateSql() {
+        return "UPDATE games SET name = ?, genre = ? WHERE id = ?";
+    }
+
 }

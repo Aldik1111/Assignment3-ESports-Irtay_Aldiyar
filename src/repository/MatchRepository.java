@@ -1,10 +1,12 @@
 package repository;
 
+import exception.DatabaseException;
 import model.Match;
 import model.Player;
 import model.Team;
 import model.Tournament;
 import repository.impl.JdbcCrudRepository;
+import utils.DatabaseConnection;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,12 +55,44 @@ public class MatchRepository extends JdbcCrudRepository<Match> {
     }
 
     @Override
-    public void update(int id, Match match) {
-        update(match.getId(), match);
+    public void update(Match match) {
+        String sql = getUpdateSql();
+
+        try (var conn = utils.DatabaseConnection.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            setUpdateParams(ps, match);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new exception.DatabaseException("Failed to update match", e);
+        }
+    }
+
+    public static void deleteByTournamentId(int tournamentId) {
+        String sql = "DELETE FROM matches WHERE tournament_id = ?";
+
+        try (var conn = DatabaseConnection.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, tournamentId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to delete matches", e);
+        }
     }
 
 
+    @Override
     protected String getInsertSql() {
-        return "INSERT INTO matches (id, team1_id, team2_id, tournament_id) VALUES (?, ?, ?, ?)";
+        return "INSERT INTO matches (id, tournament_id, team1_id, team2_id) VALUES (?, ?, ?, ?)";
     }
+
+
+    @Override
+    protected String getUpdateSql(){
+        return "UPDATE matches SET tournament_id = ?, team1_id = ?, team2_id = ? WHERE id = ?";
+    }
+
 }

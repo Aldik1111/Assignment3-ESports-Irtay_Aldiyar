@@ -1,5 +1,6 @@
 package repository;
 
+import model.Match;
 import model.Team;
 import repository.impl.JdbcCrudRepository;
 
@@ -32,11 +33,28 @@ public class TeamRepository extends JdbcCrudRepository<Team> {
     }
 
     @Override
-    public void update(int id, Team team) {
-        update(team.getId(), team);
+    public void update(Team team) {
+        String sql = getUpdateSql();
+
+        try (var conn = utils.DatabaseConnection.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            setUpdateParams(ps, team);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new exception.DatabaseException("Failed to update team", e);
+        }
     }
 
+    @Override
     protected String getInsertSql() {
         return "INSERT INTO teams (id, name) VALUES (?, ?)";
+    }
+
+
+    @Override
+    protected String getUpdateSql() {
+        return "UPDATE teams SET name = ? WHERE id = ?";
     }
 }

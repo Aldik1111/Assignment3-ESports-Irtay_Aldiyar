@@ -19,7 +19,7 @@ public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRe
 
     @Override
     public void save(T entity) {
-        String sql = "INSERT INTO " + getTableName() + " VALUES (...)"; // вставим в наследниках
+        String sql = getInsertSql();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -30,6 +30,9 @@ public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRe
             throw new DatabaseException("Failed to save entity", e);
         }
     }
+
+    protected abstract String getInsertSql();
+
 
     @Override
     public Optional<T> findById(int id) {
@@ -49,6 +52,9 @@ public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRe
         }
     }
 
+    protected abstract String getUpdateSql();
+
+
     @Override
     public List<T> findAll() {
         String sql = "SELECT * FROM " + getTableName();
@@ -67,6 +73,24 @@ public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRe
         return list;
     }
 
+    public T getById(int id) {
+        return findById(id).orElse(null); // возвращаем объект или null
+    }
+
+    @Override
+    public void update(T entity) {
+        String sql = getUpdateSql();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            setUpdateParams(ps, entity);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Failed to update entity", e);
+        }
+    }
+
     @Override
     public void deleteById(int id) {
         String sql = "DELETE FROM " + getTableName() + " WHERE id = ?";
@@ -80,4 +104,6 @@ public abstract class JdbcCrudRepository<T extends BaseEntity> implements CrudRe
             throw new DatabaseException("Failed to delete entity", e);
         }
     }
+
+
 }

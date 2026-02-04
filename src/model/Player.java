@@ -16,6 +16,7 @@ public class Player extends BaseEntity implements IValidatable<Player> {
         validateOrThrow(this);
     }
 
+
     @Override
     public boolean isValid(Player player) {
         return player != null &&

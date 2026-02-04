@@ -1,86 +1,89 @@
-import model.*;
 import controller.*;
+import model.*;
+import service.*;
 
 public class Main {
+
     public static void main(String[] args) {
+        // Controllers
+        GameController gameController = new GameController();;
         TeamController teamController = new TeamController();
+        PlayerController playerController = new PlayerController();
         TournamentController tournamentController = new TournamentController();
-        GameController gameController = new GameController();
         MatchController matchController = new MatchController();
 
-        System.out.println("<=======================>");
-        System.out.println("Starting Esports Application");
-        System.out.println("<=======================>");
+        System.out.println("=== ESports App Demo ===\n");
 
-        // ---- CREATE GAMES ----
+        // Games
         Game dota = new Moba(1, "Dota 2");
-        Game cs2 = new Fps(2, "CS2");
+        Game csgo = new Fps(2, "CS:GO");
 
         gameController.create(dota);
-        gameController.create(cs2);
+        gameController.create(csgo);
 
-        System.out.println("\nAll games in the system:");
+        System.out.println("\n--- All Games ---");
         gameController.getAll();
 
-        // ---- CREATE TEAMS ----
-        Team alpha = new Team(1, "Team Alpha");
-        Team beta = new Team(2, "Team Beta");
-        Team gamma = new Team(3, "Team Gamma");
+        // Commands
+        Team teamA = new Team(1, "Team Alpha");
+        Team teamB = new Team(2, "Team Bravo");
+        Team teamC = new Team(3, "Team Charlie");
 
-        teamController.createTeam(alpha);
-        teamController.createTeam(beta);
-        teamController.createTeam(gamma);
+        teamController.create(teamA);
+        teamController.create(teamB);
+        teamController.create(teamC);
 
-        System.out.println("\nAll teams in the system:");
-        teamController.listTeams(null);
+        System.out.println("\n--- All Teams ---");
+        teamController.getAll();
 
-        // ---- CREATE TOURNAMENTS ----
-        Tournament spring_2026_dota = new Tournament(1, "Spring Esports Cup", dota);
-        Tournament summer_2026_cs2 = new Tournament(2, "Summer Showdown", cs2);
+        // PLayers
+        Player p1 = new Player(1, "Allan", 20, 5, teamA.getId());
+        Player p2 = new Player(2, "Plasha", 22, 6, teamA.getId());
+        Player p3 = new Player(3, "Piter", 19, 7, teamB.getId());
 
-        tournamentController.create(spring_2026_dota);
-        tournamentController.create(summer_2026_cs2);
+        playerController.create(p1);
+        playerController.create(p2);
+        playerController.create(p3);
 
-        System.out.println("\nAll tournaments in the system:");
+        System.out.println("\n--- Players in Team Alpha ---");
+        playerController.getById(teamA.getId());
+
+        // Tournaments
+        Tournament tour1 = new Tournament(1, "Winter Cup", dota);
+        tournamentController.create(tour1);
+
+        System.out.println("\n--- All Tournaments ---");
         tournamentController.getAll();
 
-        // ---- CREATE MATCHES ----
-        Match match1 = new Match(1, alpha, beta, spring_2026_dota, 0, 0);
-        Match match2 = new Match(2, beta, gamma, summer_2026_cs2, 0, 0);
-
+        // Matches
+        Match match1 = new Match(1, teamA, teamB, tour1, 0, 0);
+        match1.playMatch(); // рандомный счёт
         matchController.create(match1);
-        matchController.create(match2);
 
-        System.out.println("\nAll matches in the system:");
+        System.out.println("\n--- All Matches ---");
         matchController.getAll();
 
-        // ---- GET SPECIFIC TEAM AND GAME ----
-        System.out.println("\nGet team by ID 2:");
-        teamController.teamById(2);
+        // --- Обновление команды ---
+        teamA.setName("Team Alpha Updated");
+        teamController.update(teamA);
 
-        System.out.println("\nGet game by ID 1:");
-        gameController.getById(1);
+        System.out.println("\n--- Teams after update ---");
+        teamController.getAll();
 
-        System.out.println("\nGet tournament by ID 2:");
-        tournamentController.getById(2);
+        // --- Удаление игрока ---
+        System.out.println("\nDeleting Player3...");
+        playerController.delete(3);
 
-        System.out.println("\nGet match by ID 1:");
-        matchController.getById(1);
+        System.out.println("\n--- All Players ---");
+        playerController.getAll();
 
-        // ---- UPDATE EXAMPLE ----
-        System.out.println("\nUpdating team 3 name to 'Team Delta'...");
-        gamma.setName("Team Delta");
-        teamController.createTeam(gamma);
-        teamController.listTeams(null);
+        // --- Удаление турнира ---
+        System.out.println("\nDeleting Tournament Winter Cup...");
+        tournamentController.delete(1);
 
-        // ---- DELETE EXAMPLE ----
-        System.out.println("\nDeleting match 2...");
-        matchController.delete(2);
-        System.out.println("Matches after deletion:");
-        matchController.getAll();
+        System.out.println("\n--- All Tournaments ---");
+        tournamentController.getAll();
 
-        System.out.println("<=======================>");
-        System.out.println("Application finished successfully.");
-        System.out.println("<=======================>");
+        System.out.println("\n=== Demo Finished ===");
     }
 }

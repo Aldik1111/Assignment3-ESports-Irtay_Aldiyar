@@ -26,7 +26,7 @@ public class TeamService {
 
     public void updateTeam(Team team) {
         validateTeam(team);
-        teamRepository.save(team);
+        teamRepository.update(team);
     }
 
     public void deleteTeam(int id) {

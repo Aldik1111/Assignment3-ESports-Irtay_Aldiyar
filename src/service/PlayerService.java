@@ -33,6 +33,9 @@ public class PlayerService {
         playerRepository.deleteById(id);
     }
 
+    public List<Player> getByTeam(int teamId) {
+        return playerRepository.findByTeamId(teamId);
+    }
     private void validatePlayer(Player player) {
         if (player.getNickname() == null || player.getNickname().isEmpty()) {
             throw new ValidationException("Player nickname cannot be empty");

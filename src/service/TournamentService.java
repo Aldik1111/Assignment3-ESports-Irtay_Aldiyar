@@ -2,6 +2,7 @@ package service;
 
 import model.Tournament;
 import repository.TournamentRepository;
+import repository.MatchRepository;
 import exception.ValidationException;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class TournamentService {
     }
 
     public void deleteTournament(int id) {
+        MatchRepository.deleteByTournamentId(id);
         tournamentRepository.deleteById(id);
     }
 

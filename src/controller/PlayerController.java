@@ -1,5 +1,6 @@
 package controller;
 
+import exception.ValidationException;
 import model.Player;
 import service.PlayerService;
 
@@ -10,9 +11,14 @@ public class PlayerController {
     private final PlayerService playerService = new PlayerService();
 
     public void create(Player player) {
-        playerService.createPlayer(player);
-        System.out.println("Player created: " + player.getNickname());
+        try {
+            playerService.createPlayer(player);
+            System.out.println("Player created: " + player.getNickname());
+        } catch (ValidationException e) {
+            System.out.println("Failed to create player: " + e.getMessage());
+        }
     }
+
 
     public void getAll() {
         List<Player> players = playerService.getAllPlayers();
@@ -29,6 +35,16 @@ public class PlayerController {
                 () -> System.out.println("Player not found.")
         );
     }
+
+    public void getByTeam(int teamId) {
+        List<Player> players = playerService.getByTeam(teamId);
+        if (players.isEmpty()) {
+            System.out.println("No players in team " + teamId);
+            return;
+        }
+        players.forEach(System.out::println);
+    }
+
 
     public void update(Player player) {
         playerService.updatePlayer(player);
