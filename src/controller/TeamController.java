@@ -1,5 +1,6 @@
 package controller;
 
+import model.Game;
 import model.Team;
 import service.TeamService;
 
@@ -10,7 +11,7 @@ import exception.*;
 public class TeamController {
     private final TeamService service = new TeamService();
 
-    public void createTeam(Team team) {
+    public void create(Team team) {
         try {
             service.create(team);
             System.out.println("<=======================>");
@@ -20,16 +21,19 @@ public class TeamController {
         }
     }
 
-    public void listTeams(Team team) {
-        try {
-            List<Team> teams = service.getAll();
-            teams.forEach(System.out::println);
-        } catch (ApplicationException e) {
-            System.out.println("ERROR: " + e.getMessage());
+    public void getAll() {
+        List<Team> games = service.getAll();
+        if (games.isEmpty()) {
+            System.out.println("No games found.");
+            return;
         }
+        games.forEach(g ->
+                System.out.println(g.getId() + " | " + g.getName())
+        );
     }
 
-    public void teamById(int id) {
+
+    public void getById(int id) {
         try {
             service.getById(id);
         } catch (ApplicationException e) {

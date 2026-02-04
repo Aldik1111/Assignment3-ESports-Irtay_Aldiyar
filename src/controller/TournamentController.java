@@ -1,5 +1,6 @@
 package controller;
 
+import exception.ApplicationException;
 import model.Tournament;
 import service.TournamentService;
 
@@ -10,8 +11,13 @@ public class TournamentController {
     private final TournamentService service = new TournamentService();
 
     public void create(Tournament tournament) {
-        service.create(tournament);
-        System.out.println("Tournament created: " + tournament.getName());
+        try {
+            service.create(tournament);
+            System.out.println("<=======================>");
+            System.out.println("Tournament created: " + tournament.getName());
+        }catch (ApplicationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 
     public void getAll() {
@@ -44,11 +50,17 @@ public class TournamentController {
 
     public void update(int id, Tournament tournament) {
         service.update(id, tournament);
+        System.out.println("<=======================>");
         System.out.println("Tournament updated.");
     }
 
     public void delete(int id) {
-        service.delete(id);
-        System.out.println("Tournament deleted.");
+        try {
+            service.delete(id);
+            System.out.println("<=======================>");
+            System.out.println("Tournament deleted.");
+        }  catch (ApplicationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 }

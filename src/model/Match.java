@@ -38,7 +38,7 @@ public class Match implements IScorable {
 
     public Team getWinner() { // Get winner
         if(score1>score2){winner=team1;}
-        else if (score1<score1){winner=team2;}
+        else if (score1<score2){winner=team2;}
         else{winner = null;}
         return winner;
     }

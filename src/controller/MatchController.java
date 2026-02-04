@@ -71,6 +71,7 @@ public class MatchController {
     public void delete(int id) {
         try {
             service.delete(id);
+            System.out.println("<=======================>");
             System.out.println("Match deleted.");
         } catch (ApplicationException e) {
             System.out.println("ERROR: " + e.getMessage());

@@ -1,5 +1,6 @@
 package controller;
 
+import exception.ApplicationException;
 import model.Game;
 import service.GameService;
 
@@ -10,9 +11,13 @@ public class GameController {
     private final GameService service = new GameService();
 
     public void create(Game game) {
-        service.create(game);
-        System.out.println("<=======================>");
-        System.out.println("Game " + game.getName() +" created");
+        try {
+            service.create(game);
+            System.out.println("<=======================>");
+            System.out.println("Game " + game.getName() + " created");
+        } catch (ApplicationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 
     public void getAll() {
@@ -37,11 +42,17 @@ public class GameController {
 
     public void update(int id, Game game) {
         service.updateGame(id, game);
+        System.out.println("<=======================>");
         System.out.println("Game updated.");
     }
 
     public void delete(int id) {
-        service.deleteGame(id);
-        System.out.println("Game deleted.");
+        try {
+            service.deleteGame(id);
+            System.out.println("<=======================>");
+            System.out.println("Game deleted.");
+        } catch (ApplicationException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
     }
 }
