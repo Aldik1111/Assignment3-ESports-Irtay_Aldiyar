@@ -1,19 +1,18 @@
 package repository;
 
 import model.Game;
-import model.Team;
 import model.Tournament;
+import repository.impl.InMemoryCrudRepository;
 import utils.DatabaseConnection;
 import exception.*;
-import repository.GameRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TournamentRepository {
+public class TournamentRepository extends InMemoryCrudRepository<Tournament> {
 
-    public void create(Tournament tournament) {
+    public void create(Tournament tournament){
         String sql = "insert into tournaments (id, name, game_id) values (?, ?, ?)";
 
         try(Connection conn = DatabaseConnection.getConnection();
@@ -104,8 +103,15 @@ public class TournamentRepository {
             ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e){
-            throw new DatabaseException("Failed to tournament team:\n " + e, e);
+            throw new DatabaseException("Failed to tournament tournament:\n " + e, e);
         }
+    }
+
+    @Override
+    public void update(Tournament tournament) {
+        findById(tournament.getId()).ifPresent(existing ->
+                existing.setName(tournament.getName())
+        );
     }
 
 }

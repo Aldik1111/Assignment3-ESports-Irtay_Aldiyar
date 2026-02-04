@@ -1,6 +1,7 @@
 package repository;
 
 import model.Team;
+import repository.impl.InMemoryCrudRepository;
 import utils.DatabaseConnection;
 import exception.*;
 
@@ -8,7 +9,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeamRepository {
+public class TeamRepository extends InMemoryCrudRepository<Team> {
     public void create(Team team){
         String sql = "insert into teams(id,name) values(?, ?)";
 
@@ -89,5 +90,12 @@ public class TeamRepository {
             throw new DatabaseException("Failed to delete team:\n " + e, e);
         }
     }
+    @Override
+    public void update(Team team) {
+        findById(team.getId()).ifPresent(existing ->
+                existing.setName(team.getName())
+        );
+    }
+
 
 }
