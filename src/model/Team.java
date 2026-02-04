@@ -1,10 +1,12 @@
 package model;
 
 import model.interfaces.IRegisterable;
+import model.interfaces.IValidatable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Team extends BaseEntity implements IRegisterable {
+public class Team extends BaseEntity implements IRegisterable, IValidatable<Team> {
 
     private final List<Player> players;
     private boolean registered = false;
@@ -47,5 +49,12 @@ public class Team extends BaseEntity implements IRegisterable {
 
     public boolean isRegistered() {
         return registered;
+    }
+
+    @Override
+    public boolean isValid(Team team) {
+        return team != null
+                && team.getName() != null
+                && !team.getName().trim().isEmpty();
     }
 }
