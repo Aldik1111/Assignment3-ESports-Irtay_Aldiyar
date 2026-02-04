@@ -1,50 +1,24 @@
 package model;
 
-public abstract class Game {
+public abstract class Game extends BaseEntity {
 
-    protected int id;
-    protected String name;
-
-    // Constructor
-    public Game(int id, String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Game name cannot be empty");
-        }
-        this.id = id;
-        this.name = name;
+    protected Game(int id, String name) {
+        super(id, name);
     }
 
-    // Abstract methods
+    // abstract methods (уже были)
     public abstract int getTeamSize();
-
     public abstract String getGenre();
 
+    @Override
+    public String getEntityType() {
+        return "Game";
+    }
 
-    // Getters and Setters
+    @Override
     public String getInfo() {
-        return "Game: " + name + " | Genre: " + getGenre() +
+        return "Game: " + name +
+                " | Genre: " + getGenre() +
                 " | Team size: " + getTeamSize();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("Id must be positive");
-        }
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Game name cannot be empty");
-        }
-        this.name = name;
     }
 }
