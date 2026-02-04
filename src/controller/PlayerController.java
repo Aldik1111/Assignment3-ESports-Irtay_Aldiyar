@@ -13,7 +13,7 @@ public class PlayerController {
     public void create(Player player) {
         try {
             playerService.createPlayer(player);
-            System.out.println("Player created: " + player.getNickname());
+            System.out.println("Player created: " + player.getName());
         } catch (ValidationException e) {
             System.out.println("Failed to create player: " + e.getMessage());
         }

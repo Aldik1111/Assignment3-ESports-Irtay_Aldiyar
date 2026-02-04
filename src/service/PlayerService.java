@@ -37,7 +37,7 @@ public class PlayerService {
         return playerRepository.findByTeamId(teamId);
     }
     private void validatePlayer(Player player) {
-        if (player.getNickname() == null || player.getNickname().isEmpty()) {
+        if (player.getName() == null || player.getName().isEmpty()) {
             throw new ValidationException("Player nickname cannot be empty");
         }
         if (player.getAge() <= 0) {

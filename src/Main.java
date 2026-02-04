@@ -57,7 +57,7 @@ public class Main {
 
         // Matches
         Match match1 = new Match(1, teamA, teamB, tour1, 0, 0);
-        match1.playMatch(); // рандомный счёт
+        match1.playMatch();
         matchController.create(match1);
 
         System.out.println("\n--- All Matches ---");

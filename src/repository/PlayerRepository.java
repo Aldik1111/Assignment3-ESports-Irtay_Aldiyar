@@ -36,7 +36,7 @@ public class PlayerRepository extends JdbcCrudRepository<Player> {
     @Override
     protected void setInsertParams(PreparedStatement ps, Player entity) throws SQLException {
         ps.setInt(1, entity.getId());
-        ps.setString(2, entity.getNickname());
+        ps.setString(2, entity.getName());
         ps.setInt(3, entity.getAge());
         ps.setInt(4, entity.getRank());
         ps.setInt(5, entity.getTeamId());
@@ -44,7 +44,7 @@ public class PlayerRepository extends JdbcCrudRepository<Player> {
 
     @Override
     protected void setUpdateParams(PreparedStatement ps, Player p) throws SQLException {
-        ps.setString(1, p.getNickname());
+        ps.setString(1, p.getName());
         ps.setInt(2, p.getAge());
         ps.setInt(3, p.getRank());
         ps.setInt(4, p.getTeamId());
